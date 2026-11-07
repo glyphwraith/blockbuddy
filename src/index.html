@@ -1,0 +1,30 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>BlockBuddy</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header>
+  <h1>🧸 BlockBuddy <small>Minecraft Bedrock pack maker!</small></h1>
+  <div class="meta">
+    <input id="pname" placeholder="Pack name" value="My Cute Pack">
+    <input id="pdesc" placeholder="Description" value="Made with BlockBuddy 💖">
+    <select id="pfmt"><option value="1.20.0">Bedrock 1.20+</option><option value="1.21.0" selected>Bedrock 1.21+</option></select>
+    <button id="export" class="big">📦 Export Pack</button>
+  </div>
+</header>
+<nav id="tabs">
+  <button data-tab="blocks" class="on">🧱 Blocks</button>
+  <button data-tab="items">⚔️ Items</button>
+  <button data-tab="env">🌈 Sky &amp; Overlays</button>
+</nav>
+<main>
+  <aside>
+    <input id="search" placeholder="🔍 Search…">
+    <div id="list"></div>
+    <div id="addrow"><input id="custom" placeholder="custom id e.g. amethyst_block"><button id="addbtn">＋</button></div>
+  </aside>
+  <section id="editor"><p class="hint">👈 Pick something from the list to start decorating!</p></section>
+</main>
+<div id="toast"></div>
+<div id="critter">🐱</div>
+<script src="blocks.js"></script><script src="app.js"></script>
+</body></html>

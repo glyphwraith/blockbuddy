@@ -1,0 +1,44 @@
+{
+  "name": "blockbuddy",
+  "version": "0.2.0",
+  "description": "A cute, easy Minecraft resource pack maker",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --publish never",
+    "cap:sync": "cap sync android"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/filesystem": "^6.0.1",
+    "@capacitor/share": "^6.0.2"
+  },
+  "build": {
+    "appId": "com.blockbuddy.app",
+    "productName": "BlockBuddy",
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "artifactName": "BlockBuddy-Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "BlockBuddy-Portable.${ext}"
+    }
+  }
+}
