@@ -1,0 +1,65 @@
+name: Release (Windows + Android + Web)
+on:
+  push: { tags: ['v*'] }
+  workflow_dispatch: {}
+permissions: { contents: write, pages: write, id-token: write }
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with: { name: windows, path: dist/*.exe }
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - run: npm install
+      - run: npx cap add android
+      - run: npx cap sync android
+      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk BlockBuddy.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: android, path: BlockBuddy.apk }
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cd src && zip -r ../BlockBuddy-Web.zip .
+      - uses: actions/upload-artifact@v4
+        with: { name: web, path: BlockBuddy-Web.zip }
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: src }
+  pages:
+    needs: web
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: '${{ steps.d.outputs.page_url }}' }
+    steps:
+      - id: d
+        uses: actions/deploy-pages@v4
+  release:
+    needs: [windows, android, web]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: out, merge-multiple: true }
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: BlockBuddy ${{ github.ref_name }}
+          generate_release_notes: true
+          body: |
+            ## Download BlockBuddy (Minecraft Bedrock pack maker)
+            - 🪟 **Windows:** `BlockBuddy-Setup.exe` (installer) or `BlockBuddy-Portable.exe`
+            - 🤖 **Android:** `BlockBuddy.apk`
+            - 🌐 **Web app (Mac, Linux, iPhone, any browser):** https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+            - 📦 `BlockBuddy-Web.zip` is the same web app for offline use
+          files: out/*
